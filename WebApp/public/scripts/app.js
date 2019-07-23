@@ -22,9 +22,6 @@ const genscriptApp = {
     addDialogContainer: document.getElementById('addDialogContainer'),
 };
 
-const AUTH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSIsImtpZCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSJ9.eyJhdWQiOiJodHRwczovL2hhY2thdGhvbnNydnIuYXp1cmV3ZWJzaXRlcy5uZXQiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC80YTI0NjA3MS0wN2MzLTQ0ZDQtYTBlNi0wNjU3MDI0N2FjMGEvIiwiaWF0IjoxNTYzODMyNTU3LCJuYmYiOjE1NjM4MzI1NTcsImV4cCI6MTU2MzgzNjQ1NywiYWNyIjoiMSIsImFpbyI6IjQyRmdZREEvOStGZlA4OHBzVVZLRzlUampWdGVLN3g3M3FHOGROSEpGWFpsQmY4TS9Kc0EiLCJhbXIiOlsicHdkIl0sImFwcGlkIjoiOTJjNTgxYmEtMWM5Zi00YTMzLTgwZDYtNmFlYmMyYTBkYzc3IiwiYXBwaWRhY3IiOiIxIiwiaXBhZGRyIjoiMTkyLjkyLjIxNC4yMDYiLCJuYW1lIjoiaGFja2F0aG9uLWFkbWluIiwib2lkIjoiODZmNGY5YTEtMjZmMy00YzhmLTkxZjctNTg4MTBjNDBiZTYyIiwicm9sZXMiOlsiYWRtaW4iXSwic2NwIjoidXNlcl9pbXBlcnNvbmF0aW9uIiwic3ViIjoiWmIzQk5fUEFxN0FQNFNaUmxJU29ISzVnYk1KamtkRjNEeTlXTWsteWJ2cyIsInRpZCI6IjRhMjQ2MDcxLTA3YzMtNDRkNC1hMGU2LTA2NTcwMjQ3YWMwYSIsInVuaXF1ZV9uYW1lIjoiaGFja2F0aG9uLWFkbWluQHJlc29sdXRlb3BlbnNvdXJjZS5vbm1pY3Jvc29mdC5jb20iLCJ1cG4iOiJoYWNrYXRob24tYWRtaW5AcmVzb2x1dGVvcGVuc291cmNlLm9ubWljcm9zb2Z0LmNvbSIsInV0aSI6Ilo5Zm1MdE9GakUyUGdPOGJDUVlBQUEiLCJ2ZXIiOiIxLjAifQ.Kd2hWqwGMFeLuKtu9VgmntmC7ITK4k-fNvPlmSUBGfr2wImpM13qkDWaZQkPDmBGHmJf_qeyHj-7PTTYokTRaUGaG5DvIrFzfJOiMvSeElinFmOfDC6xtaEnu-V9ijGQ0ZaczFe5TYMrJ0mZ-njVS4KYh7wQpn4HduRZS5RNf8tY-SBHyjzyueYihjrJQ2dJco3fXOHvwqjp_8QxUvYGKkjh12iuVQLMr_HwnttE7e5TJWT32ffAn6qrgHd1vyA6U7Sxno-TReuYqXJ4BPSl3J2IbDijHHZKAEeJG7zmrIRvdLz7Ib7WLPx24b9pdmyQgjaBnvzxGfG8hwagf4zR8A.RNN2uQ25koIKoNnK6O4H31GEXDQLJT-FXaP9ZPgOfnRgzcoy1_5wOIXiqYEOyrhWg13qb-d_y9KQ0g60LVu1r_WaTJnZLVITc_sa85rAR_UO1keKd0QmIJYAKj0s8lQEWEFCi_WO5tmwx-L73wu7PXKLrKsdTEKmyUWOAfle4ev8B1TdV1cST36En9HYIg7LZ2GlxpJy3T-AaKprpgbCtMlL9TpgghqycZ-Nye5Pt7CGH3r0PsPBt0BbqUSCmHXLNPmd7mkpL4lD0R9_y-wyYZzaYEb9keWwoRHOm8sgym950LAqVVWGWDdIIUlj1xBOemtoZuZPQ2jvIDkusgCGvg';
-const BASE_URL = 'https://hackathonsrvr.azurewebsites.net';
-
 /**
  * Toggles the visibility of the add location dialog box.
  */
@@ -70,13 +67,6 @@ function clickPatient(evt) {
  * @return {Object} The weather forecast, if the request fails, return null.
  */
 function getPatientFromNetwork(name) {
-    return new Promise((resolve) => {
-        resolve({
-            'id': Math.floor(Math.random() * 1000000),
-            'name': name
-        });
-    });
-    /*
     const nameParts = name.split(' ');
     return fetch(`/patient?family=${nameParts[1]}&given=${nameParts[0]}`)
         .then((response) => {
@@ -86,9 +76,11 @@ function getPatientFromNetwork(name) {
             return data.entry[0].resource;
         })
         .catch(() => {
-            return null;
+            return {
+                'id': Math.floor(Math.random() * 1000000),
+                'name': name
+            };
         });
-        */
 }
 
 /**
