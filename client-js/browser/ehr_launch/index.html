@@ -7,49 +7,50 @@
     <title>AZURE FHIR Server for Personalized Medicine</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" type="text/css" href="./styles/main-styles.css">
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
     <script src="../app.js"></script>
     <script scr="./scripts/medication-variant-relationships.js"></script>
     <script src="./scripts/helpers.js"></script>
-    <!--
-    <link rel="manifest" href="/manifest.json">
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Weather PWA">
-    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
-    -->
 
     <meta name="description" content="Matches genome cariterisitics to perscription effects">
 </head>
 
 <body id="body">
-    <div class="header">
-        <span id="patientName" class="header-name">Patient Name</span>
-        <button id="butShowMenu" class="btn float-left h-100 menu-btn" aria-label="Menu"><span class="hamburger"></span></button>
-    </div>
 
     <div id="main" class="jumbotron width-95 main">
-        <h1 class="display-4">Prescription Genome Match</h1>
+        <h1 class="display-4">Medication to Genome Variant Relationships </h1>
         <p class="lead">Match your prescriptions to your genome</p>
-        <hr class="my-4">
-        <div>
-            <label class="search-label">Search Prescriptions</label>
-        </div>
-        <div>
-            <input id="inputSearch" class="height-2rem" />
-            <button id="btnSearch" class="btn btn-primary height-2rem" style="margin-bottom: 5px"><span class="search"></span></button>
-            <div id="result"></div>
+        <hr class="my-3" />
+        <span id="patientName" class="header-name">Patient Name</span>
+
+        <div class="accordion" id="resultsDisplay">
+            <div class="card" id="resultTemplate" hidden>
+                <div class="card-header" data-toggle="collapse" data-target="#templateBody" aria-expanded="true" aria-controls="templateBody">
+                    <h4 class="card-text mb-0">
+                        Medication names
+                    </h4>
+                </div>
+
+                <div id="templateBody" class="collapse" data-parent="#resultsDisplay">
+                    <div class="card-body">
+                        Variance list
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="cell full">
-        <h4>Patient Medications</h4>
-        <pre id="output">Loading...</pre>
-    </div>
-   
+
     <script type="text/javascript">
+        FHIR.oauth2.ready().then(function(client) {
+                var app = new App(client);
+                app.fetchCurrentPatient();
+            }).catch((err) => console.log(err));
         loadMeds(displayRelationships);
     </script>
 </body>

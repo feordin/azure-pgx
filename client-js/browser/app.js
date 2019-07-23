@@ -15,9 +15,13 @@ function App(client) {
 }
 
 App.prototype.fetchCurrentPatient = function() {
-  var render = createRenderer("patient");
+  var render = createRenderer("patientName");
   render("Loading...");
-  return this.client.patient.read().then(render, render);
+  
+  return this.client.patient.read().then((data) => {
+    var name = data.name[0].given[0] + " " + data.name[0].family;
+    render(name);
+});
 };
 
 App.prototype.fetchCurrentEncounter = function() {

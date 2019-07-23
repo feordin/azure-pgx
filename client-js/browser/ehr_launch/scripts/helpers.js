@@ -79,9 +79,25 @@ function getRelationships(medications) {
     return varianceMatches;
 }
 
+function makeResultCard(medName, varianceList) {
+    const newCard = document.getElementById('resultTemplate').cloneNode(true);
+    newCard.setAttribute('id', medName + 'Card');
+
+    const cardHeader = newCard.querySelector('.card-header');
+    cardHeader.setAttribute('data-target', '#' + medName);
+    cardHeader.setAttribute('aria-controls', medName);
+
+    newCard.querySelector('.card-text').textContent = medName.substring(0, 1).toUpperCase() + medName.substring(1);
+    newCard.querySelector('.collapse').setAttribute('id', medName);
+    newCard.querySelector('.card-body').textContent = varianceList.map(entry => entry.name).toString();
+
+    document.getElementById('resultsDisplay').appendChild(newCard);
+    newCard.removeAttribute('hidden');
+}
+
 function displayRelationships(medications) {
-    var render = createRenderer("output");
-    render(getRelationships(medications));
+    var relationships = getRelationships(medications);
+    Object.keys(relationships).forEach(medName => makeResultCard(medName, relationships[medName]));
 }
 
 function getAllRelationships() {
