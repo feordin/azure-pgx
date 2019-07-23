@@ -1,38 +1,56 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Static Template</title>
-        <link rel="stylesheet" href="../style.css">
-        <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
-        <script src="../app.js"></script>
-    </head>
-    <body>
-        <div class="cell top-left">
-            <h4>Current Patient</h4>
-            <pre id="patient"></pre>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZURE FHIR Server for Personalized Medicine</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="./styles/main-styles.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    <script src="../app.js"></script>
+    <script scr="./scripts/medication-variant-relationships.js"></script>
+    <script src="./scripts/helpers.js"></script>
+    <!--
+    <link rel="manifest" href="/manifest.json">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Weather PWA">
+    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
+    -->
+
+    <meta name="description" content="Matches genome cariterisitics to perscription effects">
+</head>
+
+<body id="body">
+    <div class="header">
+        <span id="patientName" class="header-name">Patient Name</span>
+        <button id="butShowMenu" class="btn float-left h-100 menu-btn" aria-label="Menu"><span class="hamburger"></span></button>
+    </div>
+
+    <div id="main" class="jumbotron width-95 main">
+        <h1 class="display-4">Prescription Genome Match</h1>
+        <p class="lead">Match your prescriptions to your genome</p>
+        <hr class="my-4">
+        <div>
+            <label class="search-label">Search Prescriptions</label>
         </div>
-        <div class="cell top-center">
-            <h4>Current User</h4>
-            <pre id="user"></pre>
+        <div>
+            <input id="inputSearch" class="height-2rem" />
+            <button id="btnSearch" class="btn btn-primary height-2rem" style="margin-bottom: 5px"><span class="search"></span></button>
+            <div id="result"></div>
         </div>
-        <div class="cell top-right">
-            <h4>Current Encounter</h4>
-            <pre id="encounter"></pre>
-        </div>
-        <div class="cell bottom">
-            <h4>Main Output</h4>
-            <pre id="output">Loading...</pre>
-        </div>
-        <script type="text/javascript">
-            FHIR.oauth2.ready().then(function(client) {
-                var app = new App(client);
-                App.prototype.setLabel("output", "Conformance Statement");
-                app.renderContext();
-                app.request("metadata");
-            }).catch(createRenderer("output"));
-        </script>
-    </body>
+    </div>
+    <div class="cell full">
+        <h4>Patient Medications</h4>
+        <pre id="output">Loading...</pre>
+    </div>
+   
+    <script type="text/javascript">
+        loadMeds(displayRelationships);
+    </script>
+</body>
 </html>
