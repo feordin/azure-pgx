@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZURE FHIR Server for Personalized Medicine</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/styles/main-styles.css">
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+
+    <link rel="manifest" href="/manifest.json">
+    <!-- Tags for Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Weather PWA">
+    <link rel="apple-touch-icon" href="/images/icons/icon-152x152.png">
+
+    <meta name="description" content="Matches genome cariterisitics to perscription effects">
+    <meta name="theme-color" content="#2F3BA2" />
+
+</head>
+<body>
+    <div class="header">
+        <span id="patientName" class="header-name">Patient Name</span>
+        <button id="butShowMenu" class="btn float-left h-100 menu-btn" aria-label="Menu"><span class="hamburger"></span></button>
+    </div>
+
+    <div id="main" class="jumbotron width-95 main">
+        <h1 class="display-4">Prescription Genome Match</h1>
+        <p class="lead">Match your prescriptions to your genome</p>
+        <hr class="my-4">
+        <div>
+            <label class="search-label">Search Prescriptions</label>
+        </div>
+        <div>
+            <input id="inputSearch" class="height-2rem"></input>
+            <button id="btnSearch" class="btn btn-primary height-2rem" style="margin-bottom: 5px"><span class="search"></span></button>
+        </div>
+    </div>
+
+    <div id="menu" class="menu">
+        <ul id="patientList" class="list-group">
+            <li id="patientTemplate" class="list-group-item menu-patient-item" hidden>
+                <div class="d-inline menu-patient-name">&nbsp;</div>
+                <button class="btn btn-secondary ml-1 menu-remove-patient">X</button>
+            </li>
+        </ul>
+        <div id="addNewPatient" class="alert primary-alert menu-add-patient">
+            <label class="menu-add-patient-name-lb">Patient Name</label>
+            <input id="inputAddPatient" type="text" class="menu-add-patient-name" />
+            <button id="butAddPatient" class="btn btn-secondary menu-add-patient-submit">+</button>
+        </div>
+    </div>
+
+    <script src="/scripts/app.js"></script>
+    <script src="/scripts/install.js"></script>
+    <!--
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((reg) => {
+                        console.log('Service worker registered.', reg);
+                    });
+            });
+        }
+    </script>
+        -->
+</body>
+</html>
