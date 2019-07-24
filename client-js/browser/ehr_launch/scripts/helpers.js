@@ -1,4 +1,5 @@
-﻿function loadMeds(callback) {
+﻿var fhirClient;
+function loadMeds(callback) {
     function getMedicationName(medCodings) {
         var coding = medCodings.find(function (c) {
             return c.system == "http://www.nlm.nih.gov/research/umls/rxnorm";
@@ -25,6 +26,7 @@
         .then(function (client) {
 
             // Get MedicationRequests for the selected patient
+            fhirClient = client;
             client.request("/MedicationRequest?patient=" + client.patient.id, {
                 resolveReferences: ["medicationReference"],
                 graph: true
@@ -57,10 +59,12 @@ function getMedicationNames(medicationList) {
     return medicationList.map(value => value.split(' ')[0].toLowerCase());
 }
 
-function getRelationships(medications) {
+async function getRelationships(medications) 
+{
     medicationNames = getMedicationNames(medications);
     medVarRelationships = getAllRelationships();
     varianceMatches = {};
+    var completeVariantIdList = [];
     medicationNames.forEach((value) => {
         varianceMatches[value] = [];
         medVarRelationships
@@ -73,9 +77,51 @@ function getRelationships(medications) {
             })
             .forEach((entry) => {
                 varianceMatches[value].push(entry);
+                if (!completeVariantIdList.includes(entry.name))
+                {
+                  completeVariantIdList.push(entry.name);
+                }
             });
     });
 
+    var variantList = [];
+
+    // for each identified variant that has a relationship to a drug that the patient is taking
+    // let's find out if we have variant informaiton in the database
+
+    var variantQuery = "MolecularSequence?patient=" + fhirClient.patient.id + "&referenceseqid=" + completeVariantIdList[0];
+    var promises = [];
+    for (i = 1; i < completeVariantIdList.length; i++) {
+      // we split the query into batches so it doesn't get too big
+      if ((i % 20) == 0){
+        promises.push(fhirClient.request(variantQuery).then(function (v) {
+          if (v.entry) {
+            console.log("Entry is true");
+            v.entry.forEach(function(r){
+              variantList.push(r.resource.referenceSeq.referenceSeqId.coding[0].code);
+            });
+          }
+        }));
+        var variantQuery = "MolecularSequence?patient=" + fhirClient.patient.id + "&referenceseqid=" + completeVariantIdList[i];
+      }
+      else{
+        variantQuery = variantQuery + "," + completeVariantIdList[i];
+      }
+    }
+
+    await Promise.all(promises);
+
+    console.log("Variant List for patient has length of : " + variantList.length);
+    // now remove any variants for which we do not have
+    // data in the FHIR server for the patient
+    medicationNames.forEach((value) => {
+      var filteredMatches = varianceMatches[value].filter(function (entry, indx, arr){
+        return variantList.includes(entry.name);
+      });
+      console.log("Lenght of filtered matches: " + filteredMatches.length);
+      varianceMatches[value] = filteredMatches;
+    });
+    
     return varianceMatches;
 }
 
@@ -106,8 +152,9 @@ function makeResultCard(medName, varianceList) {
 }
 
 function displayRelationships(medications) {
-    var relationships = getRelationships(medications);
+    getRelationships(medications).then(function(relationships){
     Object.keys(relationships).forEach(medName => makeResultCard(medName, relationships[medName]));
+  });
 }
 
 function getAllRelationships() {
