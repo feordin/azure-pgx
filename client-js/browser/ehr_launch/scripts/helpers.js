@@ -134,15 +134,56 @@ async function getRelationships(medications)
     return varianceMatches;
 }
 
+function getPhenotypeId(variant) {
+  const phenotypeIds = clinic_ann.filter(entry => {
+    return entry.Location === variant.variantName && entry['Related Chemicals'].includes(variant.chemicalId);
+  });
+  
+  console.log(phenotypeIds.length + ' phenotype matches found');
+
+  const phenotypeIdList = [];
+  phenotypeIds.forEach(entry => { 
+    Array.prototype.push.apply(phenotypeIdList, entry['Genotype-Phenotype IDs'].split(','));
+  });
+
+  const filteredPhenotypes = clinical_ann.filter(entry => {
+    return phenotypeIdList.includes(entry['Genotype-Phenotype ID']) 
+    && entry['Genotype'] === variant.observedAllele;
+  });
+
+  if (filteredPhenotypes.length > 0) {
+    return filteredPhenotypes.map(entry => {
+      const phenotypeData = phenotypeIds
+        .filter(value => value['Genotype-Phenotype IDs'].includes(entry['Genotype-Phenotype ID']))
+        [0];
+      entry.clinicalAnotationId = phenotypeData['Clinical Annotation ID'];
+      entry.levelOfEvidence = phenotypeData['Level of Evidence'];
+      return entry;
+    })[0];
+  }
+  else {
+    return null;
+  }
+  
+}
+
 function makeVarianceListItem(list, variance) {
-    const newItem = list.querySelector(".varianceTemplate").cloneNode(true)
-    newItem.querySelector('.variantName').textContent = variance.variantName;
-    newItem.querySelector('.variantName').setAttribute('href', `https://www.pharmgkb.org/chemical/${variance.chemicalId}/clinicalAnnotation`);
-    newItem.querySelector('.observed').textContent = variance.observedAllele;
-    newItem.querySelector('.reference').textContent = variance.referenceAllele;
-    
-    list.appendChild(newItem);
-    newItem.removeAttribute('hidden');
+    const phenotype = getPhenotypeId(variance);
+
+    if (phenotype !== null) {
+      const newItem = list.querySelector(".varianceTemplate").cloneNode(true)
+      newItem.querySelector('.variantName').textContent = variance.variantName;
+      newItem.querySelector('.variantName').setAttribute('href', `https://www.pharmgkb.org/chemical/${variance.chemicalId}/clinicalAnnotation/${phenotype.clinicalAnotationId}`);
+      newItem.querySelector('.observed').textContent = variance.observedAllele;
+      newItem.querySelector('.reference').textContent = variance.referenceAllele;
+      newItem.querySelector('.relationship').textContent = phenotype['Clinical Phenotype'];
+      newItem.querySelector('.level').textContent = phenotype.levelOfEvidence;
+
+      list.appendChild(newItem);
+      newItem.removeAttribute('hidden');
+      return true;
+    }
+    return false;
 }
 
 function makeResultCard(medName, varianceList) {
@@ -157,14 +198,32 @@ function makeResultCard(medName, varianceList) {
     newCard.querySelector('.collapse').setAttribute('id', medName);
 
     const list = newCard.querySelector('.varianceList');
-    varianceList.forEach(entry => makeVarianceListItem(list, entry));
+    var validVariance = false;
+    varianceList.forEach(entry => {
+      if (makeVarianceListItem(list, entry)) {
+        validVariance = true;
+      }
+    });
 
-    document.getElementById('resultsDisplay').appendChild(newCard);
-    newCard.removeAttribute('hidden');
+    if (validVariance) {
+      document.getElementById('resultsDisplay').appendChild(newCard);
+      newCard.removeAttribute('hidden');
+      return true;
+    }
+    return false;
 }
 
 function displayRelationships(medications) {
     getRelationships(medications).then(function(relationships){
-    Object.keys(relationships).forEach(medName => makeResultCard(medName, relationships[medName]));
+    var relationshipDisplayed = false;
+    Object.keys(relationships).forEach(medName => {
+      if (makeResultCard(medName, relationships[medName])){
+        relationshipDisplayed = true;
+      }
+    });
+    if (!relationshipDisplayed) {
+      document.getElementById('nothingFound').removeAttribute('hidden');
+    }
+    document.getElementById('loading').setAttribute('hidden', "");
   });
 }

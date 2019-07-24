@@ -16,6 +16,8 @@
     <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
     <script src="../app.js"></script>
     <script src="./scripts/chemical-variant-relationships.js"></script>
+    <script src="./scripts/clinical_ann.js"></script>
+    <script src="./scripts/clinical_ann_metadata.js"></script>
     <script src="./scripts/helpers.js"></script>
 
     <meta name="description" content="Matches genome cariterisitics to perscription effects">
@@ -28,6 +30,14 @@
         <p class="lead">Match your prescriptions to your genome</p>
         <hr class="my-3" />
         <span id="patientName" class="header-name">Patient Name</span>
+
+        <div id="loading" class="main-text">
+                Loading...
+        </div>
+
+        <div id="nothingFound" class="main-text" hidden>
+            No relationships found between your active medications and genome variants
+        </div>
 
         <div class="accordion" id="resultsDisplay">
             <div class="card" id="resultTemplate" hidden>
@@ -42,7 +52,7 @@
                         <div class="card-deck varianceList">
                             <div class="card varianceTemplate" hidden>
                                 <div class="card-header">
-                                    <a class="variantName" href="#">Variant Name</a>
+                                    <a class="variantName" href="#" target="_blank">Variant Name</a>
                                 </div>
                                 <div class="card-body">
                                     <div class="alleles">
@@ -55,9 +65,10 @@
                                             <div class="card-text text-muted">Reference</div>
                                         </div>
                                     </div>
-                                    <ul class="relationship-list">
-                                        <li class="relationship relationshipTemplate" hidden></li>
-                                    </ul>
+                                    <div class="card-text relationship"></div>
+                                    <div class="card-text text-muted">
+                                        Level of evidence:&nbsp;<span class="level"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div> 
