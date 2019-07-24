@@ -15,7 +15,7 @@
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
     <script src="../app.js"></script>
-    <script scr="./scripts/medication-variant-relationships.js"></script>
+    <script src="./scripts/chemical-variant-relationships.js"></script>
     <script src="./scripts/helpers.js"></script>
 
     <meta name="description" content="Matches genome cariterisitics to perscription effects">
@@ -31,17 +31,36 @@
 
         <div class="accordion" id="resultsDisplay">
             <div class="card" id="resultTemplate" hidden>
-                <div class="card-header" data-toggle="collapse" data-target="#templateBody" aria-expanded="true" aria-controls="templateBody">
-                    <h4 class="card-text mb-0">
+                <div class="card-header medicationHeader" data-toggle="collapse" data-target="#templateBody" aria-expanded="true" aria-controls="templateBody">
+                    <h4 class="card-text mb-0 medicationName">
                         Medication names
                     </h4>
                 </div>
 
                 <div id="templateBody" class="collapse" data-parent="#resultsDisplay">
                     <div class="card-body">
-                        <ul class="list-group varianceList">
-                            <li class="list-group-item varianceTemplate" hidden></li>
-                        </ul>
+                        <div class="card-deck varianceList">
+                            <div class="card varianceTemplate" hidden>
+                                <div class="card-header">
+                                    <a class="variantName" href="#">Variant Name</a>
+                                </div>
+                                <div class="card-body">
+                                    <div class="alleles">
+                                        <div class="allele-box">
+                                            <div class="card-text observed"></div>
+                                            <div class="card-text text-muted">Observed</div>
+                                        </div>
+                                        <div class="allele-box">
+                                            <div class="card-text reference"></div>
+                                            <div class="card-text text-muted">Reference</div>
+                                        </div>
+                                    </div>
+                                    <ul class="relationship-list">
+                                        <li class="relationship relationshipTemplate" hidden></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div> 
                     </div>
                 </div>
             </div>
